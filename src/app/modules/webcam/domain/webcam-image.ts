@@ -14,8 +14,6 @@ export class WebcamImage {
   private _imageAsBase64: string = null;
   private readonly _imageAsDataUrl: string = null;
   private readonly _imageData: ImageData = null;
-
-
   /**
    * Extracts the Base64 data out of the given dataUrl.
    * @param dataUrl the given dataUrl

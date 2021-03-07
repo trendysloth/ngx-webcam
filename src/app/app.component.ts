@@ -37,10 +37,6 @@ export class AppComponent implements OnInit {
     this.trigger.next();
   }
 
-  public toggleWebcam(): void {
-    this.showWebcam = !this.showWebcam;
-  }
-
   public handleInitError(error: WebcamInitError): void {
     if (error.mediaStreamError && error.mediaStreamError.name === 'NotAllowedError') {
       console.warn('Camera access was not allowed by user!');
@@ -57,7 +53,35 @@ export class AppComponent implements OnInit {
 
   public handleImage(webcamImage: WebcamImage): void {
     console.log('received webcam image', webcamImage);
+    this.predict(webcamImage);
     this.webcamImage = webcamImage;
+    this.predictedImage = webcamImage;
+  }
+
+  public predict(webcamImage: WebcamImage): void {
+    const inputs = {
+      "contentImage": webcamImage.imageAsDataUrl
+    };
+        
+    fetch("https://kandinsky-33e87d4c.hosted-models.runwayml.cloud/v1/query", {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(inputs)
+    })
+    .then(response => response.json())
+    .then(outputs => {
+      const { stylizedImage } = outputs;
+      // use the outputs in your project
+      console.log(stylizedImage);
+      var img = document.createElement("img");
+      img.src = stylizedImage;
+      img.width = 250;
+      var src = document.getElementById("predictedImage");
+      src.appendChild(img);
+    });
   }
 
   public cameraWasSwitched(deviceId: string): void {
